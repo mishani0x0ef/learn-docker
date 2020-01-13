@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading;
 
 namespace Learn.Docker
 {
@@ -25,9 +26,21 @@ namespace Learn.Docker
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-
                 var context = services.GetRequiredService<BloggingContext>();
-                context.Database.EnsureCreated();
+
+                for(var i = 0; i < 3; i++)
+                {
+                    try
+                    {
+                        context.Database.EnsureCreated();
+                        break;
+                    }
+                    catch
+                    {
+                        // Wait until DB container started. MR
+                        Thread.Sleep(2000);
+                    }
+                }
             }
         }
     }
