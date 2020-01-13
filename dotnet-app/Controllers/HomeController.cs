@@ -1,15 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Learn.Docker.Models;
+using Learn.Docker.Repositories;
 
 namespace Learn.Docker.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly BloggingContext _context;
+
+        public HomeController(BloggingContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -32,6 +37,12 @@ namespace Learn.Docker.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        public IActionResult Blogs()
+        {
+            var blogs = _context.Blogs.Select(blog => blog);
+            return View(blogs);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
